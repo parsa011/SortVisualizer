@@ -11,6 +11,14 @@ body {
 	padding : 5px !important;
 }
 
+.bg-green {
+	background-color: green;
+}
+
+.bg-red {
+	background-color: red;
+}
+
 .container {
 	width : 100vw;
 	height : 100vh;
@@ -42,7 +50,7 @@ body {
 	height : 90%;
 	display : flex;
 	align-items : end;
-	overflow: hidden;
+	overflow-x : scroll;
 }
 
 .container .content .chart .bar {
