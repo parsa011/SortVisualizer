@@ -1,5 +1,7 @@
 const PX_PER_DIGIT = 11;
 
+const DELAY_MS = 500;
+
 function find_max(array) {
 	let max = array[0];
 	for (let i = 1; i < array.length; i++) {
@@ -44,7 +46,7 @@ async function swapElements(el1, el2)
 	el1.textContent = el2.textContent;
 	el2.textContent = el1_text;
 
-	await Sleep(500 / 2);
+	await sleep(DELAY_MS / 2);
 					
 	el1.style.backgroundColor = "white";
 	el2.style.backgroundColor = "white";
@@ -66,7 +68,7 @@ function create_bar(n, width, max)
 	return div;
 }
 
-function Sleep(ms) {
+function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -89,18 +91,63 @@ function visualize(id, array)
 	show_bars(element, array);
 
 	let bars = document.querySelectorAll(".bar");
-	bubbleSort(array, bars);
+	selectionSort(array, bars);
 }
 
-async function bubbleSort(arr, bars)
-{
-	var len = arr.length, i, j, stop;
-	for (i = 0; i < len; i++){
-		for (j = 0, stop = len - i; j < stop; j++){
-			if (arr[j] > arr[j+1]){
-				swap(arr, j, j + 1, bars);
-				await Sleep(500 / 2);
-			}
-		}
-	}
+/* ====================== algorithms ======================== */
+
+
+const Compare = {
+    LESS_THAN: -1,
+    BIGGER_THAN: 1
+};
+
+function defaultCompare(a, b) {
+    if (a === b) {
+        return 0;
+    }
+    return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
+}
+
+async function bubbleSort(arr, bars, compare = defaultCompare) {
+    const { length } = arr;
+    for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - 1 - i; j++) { // refer to note below
+            if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
+                swap(arr, j, j + 1);
+				await sleep(DELAY_MS / 2);
+            }
+        }
+    }
+}
+
+async function selectionSort(arr, bars, compare = defaultCompare) {
+    const { length } = arr;
+    let minIndex;
+    for (let i = 0; i < length - 1; i++) {
+        minIndex = i;
+        for (let j = i; j < length; j++) {
+            if (compare(arr[minIndex], arr[j]) === Compare.BIGGER_THAN) {
+                minIndex = j;
+            }
+        }
+        if (i !== minIndex) {
+            swap(arr, i, minIndex, bars);
+			await sleep(DELAY_MS / 2);
+        }
+    }
+}
+
+async function insertionSort(arr, bars, compare = defaultCompare) {
+    const { length } = arr;
+    let temp;
+    for (let i = 1; i < length; i++) {
+        let j = i;
+        temp = arr[i];
+        while (j > 0 && compare(arr[j - 1], temp) === Compare.BIGGER_THAN) {
+            arr[j] = arr[j - 1];
+            j--;
+        }
+        arr[j] = temp;
+    }
 }
