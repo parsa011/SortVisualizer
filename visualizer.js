@@ -1,6 +1,6 @@
 const PX_PER_DIGIT = 11;
 
-const DELAY_MS = 500;
+const DELAY_MS = 400;
 
 function find_max(array) {
 	let max = array[0];
@@ -34,9 +34,6 @@ function swap(arr, firstIndex, secondIndex, bars)
  */
 async function swapElements(el1, el2)
 {
-    el1.style.backgroundColor = "red";
-	el2.style.backgroundColor = "green";
-
 	let el1_height = el1.style.height;
 	let el1_text = el1.textContent;
 
@@ -46,10 +43,16 @@ async function swapElements(el1, el2)
 	el1.textContent = el2.textContent;
 	el2.textContent = el1_text;
 
-	await sleep(DELAY_MS / 2);
-					
-	el1.style.backgroundColor = "white";
-	el2.style.backgroundColor = "white";
+}
+
+function highlight_bar(bar, color)
+{
+	bar.style.backgroundColor = color;
+}
+
+function dehighlight_bar(bar)
+{
+	bar.style.backgroundColor = "white";
 }
 
 function create_bar(n, width, max)
@@ -91,7 +94,7 @@ function visualize(id, array)
 	show_bars(element, array);
 
 	let bars = document.querySelectorAll(".bar");
-	selectionSort(array, bars);
+	insertionSort(array, bars);
 }
 
 /* ====================== algorithms ======================== */
@@ -112,10 +115,10 @@ function defaultCompare(a, b) {
 async function bubbleSort(arr, bars, compare = defaultCompare) {
     const { length } = arr;
     for (let i = 0; i < length; i++) {
-        for (let j = 0; j < length - 1 - i; j++) { // refer to note below
+        for (let j = 0; j < length - 1 - i; j++) {
             if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
-                swap(arr, j, j + 1);
-				await sleep(DELAY_MS / 2);
+				await sleep(DELAY_MS);
+                swap(arr, j, j + 1, bars);
             }
         }
     }
@@ -133,7 +136,7 @@ async function selectionSort(arr, bars, compare = defaultCompare) {
         }
         if (i !== minIndex) {
             swap(arr, i, minIndex, bars);
-			await sleep(DELAY_MS / 2);
+			await sleep(DELAY_MS);
         }
     }
 }
@@ -147,6 +150,8 @@ async function insertionSort(arr, bars, compare = defaultCompare) {
         while (j > 0 && compare(arr[j - 1], temp) === Compare.BIGGER_THAN) {
             arr[j] = arr[j - 1];
             j--;
+			swap(arr, j + 1, j, bars);
+			await sleep(DELAY_MS);
         }
         arr[j] = temp;
     }
